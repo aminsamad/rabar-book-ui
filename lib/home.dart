@@ -1,13 +1,15 @@
-import 'package:carousel_slider/carousel_slider.dart';
-
+import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:motion_tab_bar/MotionTabBarView.dart';
 import 'package:motion_tab_bar/MotionTabController.dart';
 import 'package:motion_tab_bar/motiontabbar.dart';
 import 'package:rabar_book/model/constants.dart';
 import 'package:rabar_book/model/settingList.dart';
 import 'package:rabar_book/screens/category_ui.dart';
+import 'package:rabar_book/screens/login/homeLogin.dart';
+import 'package:rabar_book/screens/viewBook.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -31,6 +33,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: primaryColor));
+    List<String> _locations = ['A', 'B', 'C', 'D'];
+    String _selectedLanguage;
     return Scaffold(
         bottomNavigationBar: MotionTabBar(
             labels: ["سه‌ره‌كی", "جۆره‌كان", "ڕێكخستن"],
@@ -57,14 +63,121 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         padding: EdgeInsets.all(8),
                         width: double.infinity,
                         decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(30),
-                                bottomRight: Radius.circular(30))),
+                          borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(20)),
+                          color: primaryColor,
+                        ),
                         child: Column(children: <Widget>[
-                          Text(
-                            "كتێبه‌كان",
-                            style: TextStyle(color: Colors.white, fontSize: 35),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, left: 20, right: 20, bottom: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  margin: EdgeInsets.only(left: 5, right: 10),
+                                  padding: EdgeInsets.all(10),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xffF4F5F9)),
+                                  child: Image.asset(
+                                    "assets/icons/user.png",
+                                    height: 35,
+                                    width: 35,
+                                    color: primaryColor,
+                                  ),
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text("زمانێك هه‌ڵبژێره‌",
+                                        style: TextStyle(color: Colors.white)),
+
+                                    //drop down
+                                    DropdownButton(
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.white,
+                                      ),
+                                      dropdownColor: Colors.white,
+                                      underline: DropdownButtonHideUnderline(
+                                        child: Text(""),
+                                      ),
+                                      hint: Text('كوردی',
+                                          style: TextStyle(
+                                              color: Colors
+                                                  .white)), // Not necessary for Option 1
+                                      value: _selectedLanguage,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          _selectedLanguage = newValue;
+                                        });
+                                      },
+                                      items: _locations.map((location) {
+                                        return DropdownMenuItem(
+                                          child: new Text(location),
+                                          value: location,
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
+
+                                //notification
+                                Badge(
+                                  badgeColor: lineColor,
+                                  badgeContent: Text(
+                                    '5',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  child: IconButton(
+                                    splashRadius: 1,
+                                    iconSize: 30,
+                                    onPressed: () {
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (BuildContext context) {
+                                        return HomeLoginScreen();
+                                      }));
+                                    },
+                                    icon: Icon(
+                                      Icons.notifications,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20, right: 20, left: 20, bottom: 10),
+                            child: Row(
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Hello ',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontFamily: "english"),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                          text: 'Rekan Waysh',
+                                          style: TextStyle(
+                                              fontFamily: "english",
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 25)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
@@ -79,76 +192,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(15)),
                               child: TextField(
                                 decoration: InputDecoration(
-                                    hintText: "Search book or author",
+                                    hintText: "گه‌ڕان له‌ كتێبه‌كان",
                                     hintStyle: TextStyle(
                                         color: Color(0xff757575),
-                                        fontFamily: "english"),
+                                        fontFamily: "kurdish"),
                                     border: InputBorder.none),
                               ),
                             ),
                           ),
-                          CarouselSlider(
-                              options: CarouselOptions(
-                                aspectRatio: 16 / 9,
-                                viewportFraction: 0.8,
-                                initialPage: 0,
-                                height: 160,
-                                scrollPhysics: BouncingScrollPhysics(),
-                                enableInfiniteScroll: true,
-                                reverse: false,
-                                autoPlay: true,
-                                autoPlayInterval: Duration(seconds: 10),
-                                autoPlayAnimationDuration:
-                                    Duration(milliseconds: 1000),
-                                autoPlayCurve: Curves.easeInOut,
-                                enlargeCenterPage: true,
-                                scrollDirection: Axis.horizontal,
-                              ),
-                              items: [
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  padding: EdgeInsets.only(
-                                      left: 25, right: 0, top: 25, bottom: 25),
-                                  margin: EdgeInsets.only(left: 5, right: 5),
-                                  height: 100,
-                                  width: 350,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(25)),
-                                  child: Row(children: <Widget>[
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          "Best Audiobooks \n of 2020",
-                                          style: TextStyle(
-                                              color: textColor,
-                                              fontSize: 16,
-                                              fontFamily: "english"),
-                                        ),
-                                        Image.asset(
-                                          "assets/icons/music.png",
-                                          height: 30,
-                                          width: 30,
-                                          color: primaryColor,
-                                        )
-                                      ],
-                                    ),
-                                    Expanded(
-                                        child: SizedBox(
-                                      width: 0,
-                                    )),
-                                    Image.asset(
-                                        "assets/images/reading_book.png",
-                                        height: 80,
-                                        width: 80,
-                                        fit: BoxFit.fill),
-                                  ]),
-                                )
-                              ])
                         ])),
                     Column(children: <Widget>[
                       Padding(
@@ -194,18 +245,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               Column(
                                 children: <Widget>[
                                   Row(children: [
-                                    Container(
-                                      margin: EdgeInsets.only(left: 20),
-                                      height: 160,
-                                      width: 120,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                            fit: BoxFit.fill,
-                                            image: AssetImage(
-                                                "assets/images/sprints.png"),
-                                          )),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(15),
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder:
+                                                  (BuildContext context) {
+                                            return ViewBook();
+                                          }));
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(left: 20),
+                                          height: 160,
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: AssetImage(
+                                                    "assets/images/sprints.png"),
+                                              )),
+                                        ),
+                                      ),
                                     )
                                   ]),
                                   Padding(
